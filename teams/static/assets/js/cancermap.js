@@ -21,10 +21,11 @@ const map = new MindMap('#mindmap-canvas');
 
 const kanker = map.node('Cancer', {color: 'pink'});
 
-const skin1 = kanker.add('Skin cancer', {color: 'amber'});
+const skin1 = kanker.add('Skin cancer numbah wumbah', {color: 'amber'});
 skin1.add('Symptoms',      { color: 'purple' });
 skin1.add('Causes',        { color: 'purple' });
-skin1.add('Description',   { color: 'purple' });
+const descriptionSkin1 = skin1.add('Description',   { color: 'purple' });
+descriptionSkin1.setNote('Very bad cancer that kills u xd');
 
 const skin2 = kanker.add('Skin cancer', {color: 'amber'});
 skin2.add('Symptoms',      { color: 'purple' });

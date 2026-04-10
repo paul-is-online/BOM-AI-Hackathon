@@ -65,7 +65,7 @@ function resolveColor(c) {
 // ---- NODE CLASS --------------------------------------------
 let _nodeId = 0;
 
-class MapNode {
+export class MapNode {
   constructor(label, opts = {}, parent = null, map = null) {
     this.id       = ++_nodeId;
     this.label    = label;
@@ -73,7 +73,7 @@ class MapNode {
     this.parent   = parent;
     this._map     = map;
     this.children = [];
-    this.collapsed = false;
+    this.collapsed = true;
     // layout (computed)
     this.x = 0;
     this.y = 0;
@@ -132,10 +132,25 @@ class MapNode {
   get visualRy() {
     return this.visualRx * 0.62;
   }
+  setNote(text) {
+  if (!this._note) {
+    this._note = {
+      visible: true,
+      text: '',
+      colorIdx: 0,
+      offsetX: this.rx + 20,
+      offsetY: -(this.ry + 60),
+      width: 210,
+      height: 130,
+    };
+  }
+  this._note.text = text;
+  this._note.visible = true;
+}
 }
 
 // ---- MINDMAP CLASS -----------------------------------------
-class MindMap {
+export class MindMap {
   constructor(selector) {
     this.svg        = document.querySelector(selector);
     this.viewport   = this.svg.querySelector('#viewport');
