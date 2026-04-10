@@ -1,3 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CancerMap</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap');
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: #f5f0eb;
+    overflow: hidden;
+    width: 100vw;
+    height: 100vh;
+  }
+
+  #mindmap-canvas {
+    width: 100%;
+    height: 100%;
+    cursor: grab;
+    user-select: none;
+  }
+
+  #mindmap-canvas:active { cursor: grabbing; }
+
+  /* SVG node styles */
+  .node-group { cursor: pointer; }
+  .node-group:hover .node-bubble { filter: brightness(1.07); }
+  .node-group:active .node-bubble { filter: brightness(0.95); }
+
+  .node-bubble {
+    transition: filter 0.15s ease;
+  }
+
+  .node-text {
+    font-family: 'Nunito', sans-serif;
+    font-weight: 700;
+    text-anchor: middle;
+    dominant-baseline: central;
+    pointer-events: none;
+    fill: white;
+  }
+
+  .connector {
+    fill: none;
+    stroke-linecap: round;
+    transition: stroke-opacity 0.2s;
+  }
+
+  /* Controls */
+  #controls {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    display: flex;
+    gap: 8px;
+    z-index: 100;
+  }
+
+  .ctrl-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: none;
+    background: white;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.12);
+    font-size: 18px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.1s, box-shadow 0.1s;
+  }
+  .ctrl-btn:hover { transform: scale(1.08); box-shadow: 0 4px 16px rgba(0,0,0,0.18); }
+  .ctrl-btn:active { transform: scale(0.96); }
+
+  /* Note boxes (foreignObject inside SVG) */
+  .note-box {
+    border-radius: 12px;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.14);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    font-family: 'Nunito', sans-serif;
+    width: 100%;
+    height: 100%;
+  }
+  .note-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 7px 10px 6px;
+    flex-shrink: 0;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .note-close {
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    border: none;
+    font-size: 12px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    transition: background 0.12s, color 0.12s;
+    background: rgba(0,0,0,0.12);
+    color: inherit;
+  }
+  .note-close:hover { background: rgba(0,0,0,0.28); }
+  .note-body {
+    flex: 1;
+    padding: 9px 11px 10px;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.6;
+    overflow-y: auto;
+    word-break: break-all;
+  }
+  .note-body a {
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    cursor: pointer;
+    opacity: 0.9;
+  }
+  .note-body a:hover { opacity: 1; }
+
+  /* Filter bar */
+  #filter-bar {
+    position: fixed;
+    top: 16px;
+    left: 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: white;
+    border-radius: 20px;
+    padding: 6px 14px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    font-family: 'Nunito', sans-serif;
+    font-size: 13px;
+    z-index: 200;
+  }
+  #filter-bar label {
+    color: #888;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+  #filter-select {
+    border: none;
+    outline: none;
+    font-family: 'Nunito', sans-serif;
+    font-size: 13px;
+    font-weight: 800;
+    color: #333;
+    background: transparent;
+    cursor: pointer;
+    padding-right: 4px;
+  }
+
+  /* Info bar */
+  #info {
+    position: fixed;
+    top: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: white;
+    border-radius: 20px;
+    padding: 6px 16px;
+    font-size: 13px;
+    font-family: 'Nunito', sans-serif;
+    color: #666;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    pointer-events: none;
+  }
+</style>
+</head>
+<body>
+
+<svg id="mindmap-canvas" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="3" stdDeviation="4" flood-color="rgba(0,0,0,0.12)"/>
+    </filter>
+    <filter id="shadow-sm" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="2" stdDeviation="2.5" flood-color="rgba(0,0,0,0.1)"/>
+    </filter>
+  </defs>
+  <g id="viewport">
+    <g id="connectors-layer"></g>
+    <g id="nodes-layer"></g>
+    <g id="notes-layer"></g>
+  </g>
+</svg>
+
+<div id="filter-bar">
+  <label for="filter-select">Audience:</label>
+  <select id="filter-select">
+    <option value="professional">Professional</option>
+    <option value="patient">Patient</option>
+    <option value="policy_maker">Policy maker</option>
+  </select>
+</div>
+
+<div id="controls">
+  <button class="ctrl-btn" id="btn-zoom-in" title="Zoom in">+</button>
+  <button class="ctrl-btn" id="btn-zoom-out" title="Zoom out">−</button>
+  <button class="ctrl-btn" id="btn-reset" title="Reset view">⌖</button>
+</div>
+
+<div id="info">Left-click: expand/collapse</div>
+
+<script>
 /* ============================================================
    MindMap Library
    ============================================================
@@ -73,7 +290,7 @@ class MapNode {
     this.parent   = parent;
     this._map     = map;
     this.children = [];
-    this.collapsed = false;
+    this.collapsed = true;
     // layout (computed)
     this.x = 0;
     this.y = 0;
@@ -368,7 +585,7 @@ class MindMap {
       }
     });
 
-    g.addEventListener('contextmenu', e => {
+    g.addEventListener('click', e => {
       e.preventDefault();
       e.stopPropagation();
       this._toggleNote(node);
@@ -723,3 +940,7 @@ buildMap('professional');
 document.getElementById('filter-select').addEventListener('change', e => {
   buildMap(e.target.value);
 });
+
+</script>
+</body>
+</html>

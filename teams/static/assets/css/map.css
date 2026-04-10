@@ -72,67 +72,88 @@
 
   /* Note boxes (foreignObject inside SVG) */
   .note-box {
-    background: #fffdf7;
     border-radius: 12px;
-    border: 2px solid #e0d8cc;
-    box-shadow: 0 4px 18px rgba(0,0,0,0.13);
+    box-shadow: 0 4px 18px rgba(0,0,0,0.14);
     display: flex;
     flex-direction: column;
     overflow: hidden;
     font-family: 'Nunito', sans-serif;
-    transition: box-shadow 0.15s;
     width: 100%;
     height: 100%;
   }
-  .note-box:focus-within { box-shadow: 0 6px 24px rgba(0,0,0,0.18); }
-  .note-toolbar {
+  .note-header {
     display: flex;
     align-items: center;
-    gap: 5px;
+    justify-content: space-between;
     padding: 7px 10px 6px;
-    border-bottom: 1.5px solid #ede8df;
-    background: #faf6ef;
     flex-shrink: 0;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
   }
-  .note-color-swatch {
-    width: 18px; height: 18px;
-    border-radius: 50%;
-    border: 2.5px solid transparent;
-    cursor: pointer;
-    transition: transform 0.12s, border-color 0.12s;
-    flex-shrink: 0;
-  }
-  .note-color-swatch:hover { transform: scale(1.22); }
-  .note-color-swatch.active { border-color: #222; transform: scale(1.15); }
-  .note-textarea {
-    flex: 1;
-    border: none;
-    outline: none;
-    resize: none;
-    background: transparent;
-    font-family: 'Nunito', sans-serif;
-    font-size: 13px;
-    font-weight: 600;
-    line-height: 1.55;
-    padding: 9px 11px;
-    color: #333;
-    min-height: 60px;
-  }
-  .note-textarea::placeholder { color: #bbb; font-weight: 400; }
   .note-close {
-    margin-left: auto;
     width: 20px; height: 20px;
     border-radius: 50%;
     border: none;
-    background: #e8e0d4;
-    color: #888;
     font-size: 12px;
     cursor: pointer;
     display: flex; align-items: center; justify-content: center;
     flex-shrink: 0;
     transition: background 0.12s, color 0.12s;
+    background: rgba(0,0,0,0.12);
+    color: inherit;
   }
-  .note-close:hover { background: #f07050; color: white; }
+  .note-close:hover { background: rgba(0,0,0,0.28); }
+  .note-body {
+    flex: 1;
+    padding: 9px 11px 10px;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.6;
+    overflow-y: auto;
+    word-break: break-all;
+  }
+  .note-body a {
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    cursor: pointer;
+    opacity: 0.9;
+  }
+  .note-body a:hover { opacity: 1; }
+
+  /* Filter bar */
+  #filter-bar {
+    position: fixed;
+    top: 16px;
+    left: 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: white;
+    border-radius: 20px;
+    padding: 6px 14px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    font-family: 'Nunito', sans-serif;
+    font-size: 13px;
+    z-index: 200;
+  }
+  #filter-bar label {
+    color: #888;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+  #filter-select {
+    border: none;
+    outline: none;
+    font-family: 'Nunito', sans-serif;
+    font-size: 13px;
+    font-weight: 800;
+    color: #333;
+    background: transparent;
+    cursor: pointer;
+    padding-right: 4px;
+  }
 
   /* Info bar */
   #info {
