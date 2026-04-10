@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MindMap</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/map.css') }}">
+  <!-- <script src="../static/assets/js/mindmap.js"></script> -->
+  <script type="module" src="{{ url_for('static', filename='assets/js/cancermap.js') }}"></script>
+</head>
+<body>
+
+<svg id="mindmap-canvas" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="3" stdDeviation="4" flood-color="rgba(0,0,0,0.12)"/>
+    </filter>
+    <filter id="shadow-sm" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="2" stdDeviation="2.5" flood-color="rgba(0,0,0,0.1)"/>
+    </filter>
+  </defs>
+  <g id="viewport">
+    <g id="connectors-layer"></g>
+    <g id="nodes-layer"></g>
+  </g>
+</svg>
+
+<div id="controls">
+  <button class="ctrl-btn" id="btn-zoom-in" title="Zoom in">+</button>
+  <button class="ctrl-btn" id="btn-zoom-out" title="Zoom out">−</button>
+  <button class="ctrl-btn" id="btn-reset" title="Reset view">⌖</button>
+</div>
+
+<div id="info">Drag to pan · Scroll to zoom · Click nodes to expand/collapse</div>
+
+<script>
+
+</script>
+</body>
+</html>
